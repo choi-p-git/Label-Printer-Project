@@ -2,21 +2,18 @@ import fitz  # PyMuPDF
 import os
 import cv2
 import numpy as np
-from pdf2image import convert_from_path
 from pyzbar.pyzbar import decode
 from PIL import Image, ImageFilter, ImageOps
 import re
 from datetime import datetime
 import time
+from config import LABEL_DIRECTORY
 
 # ---- CONFIG ----
-PDF_FOLDER = r"C:\Users\plato\Desktop\Label Database"  # Set to folder containing your PDFs
+PDF_FOLDER = os.path.join(LABEL_DIRECTORY)  # Set to folder containing your PDFs
 PROCESSING_FOLDER = os.path.join(PDF_FOLDER, "processing folder")
 ARCHIVE_FOLDER = os.path.join(PDF_FOLDER, "archive folder")
 ANCHOR_PRICE = "Price:"
-POPPLER_PATH = r"C:\poppler\poppler-24.08.0\Library\bin"  # <-- Update to actual Poppler bin path
-DEBUG = True
-SAVE_IMAGE_DEBUG = True  # Enable saving of rendered image for barcode inspection
 
 os.makedirs(PROCESSING_FOLDER, exist_ok=True)
 os.makedirs(ARCHIVE_FOLDER, exist_ok=True)

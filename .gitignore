@@ -1,0 +1,90 @@
+# ===============================
+# Python general
+# ===============================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.so
+*.egg
+*.egg-info/
+*.log
+*.tmp
+*.bak
+*.swp
+
+# ===============================
+# Virtual environments
+# ===============================
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# ===============================
+# IDE/editor configs
+# ===============================
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# ===============================
+# OS files
+# ===============================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===============================
+# PyInstaller build artifacts
+# ===============================
+build/
+dist/
+*.spec
+
+# ===============================
+# Logs & debug output
+# ===============================
+error.log
+error_*.log
+
+# ===============================
+# User-specific config
+# ===============================
+config.ini
+
+# ===============================
+# Inno Setup output
+# ===============================
+*.iss~
+Output/*.exe
+Output/*.iss
+Output/*.log
+
+# ===============================
+# Installer intermediate output
+# ===============================
+*.tmp
+*.bak
+*.old
+
+# ===============================
+# Other generated or temp files
+# ===============================
+*.pdf
+*.db
+*.sqlite
+*.sqlite3
+*.tar.gz
+*.zip
+*.tar
+
+# ===============================
+# Payload (Drivers, SumatraPDF)
+# ===============================
+SumatraPDF/
+Brother_Driver/
