@@ -14,6 +14,8 @@ DisableWelcomePage=no
 
 [Files]
 Source: "dist\label_parser.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "dist\label_parser\_internal\pymupdf\*.pyd"; DestDir: "{app}\pymupdf"; Flags: ignoreversion
+Source: "dist\label_parser\_internal\pymupdf\*.dll"; DestDir: "{app}\pymupdf"; Flags: ignoreversion
 Source: "dist\config.ini"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Label Library\*"; DestDir: "{localappdata}\LabelPrinter\Label Library"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "SumatraPDF\*"; DestDir: "{localappdata}\LabelPrinter\SumatraPDF"; Flags: ignoreversion recursesubdirs createallsubdirs

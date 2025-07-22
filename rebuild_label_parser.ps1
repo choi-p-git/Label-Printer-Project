@@ -22,31 +22,57 @@ param (
     Deletes the existing .spec file and forces regeneration.
 #>
 
-# --- Auto-detect Python Scripts path for Microsoft Store Python installs ---
-$packageRoot = "$env:LOCALAPPDATA\Packages"
-$pythonPackages = Get-ChildItem -Path $packageRoot -Directory |
-    Where-Object { $_.Name -like "PythonSoftwareFoundation.Python.*" } |
-    Sort-Object Name -Descending
-
-if (-not $pythonPackages) {
-    Write-Host "[X] No Microsoft Store Python installation found." -ForegroundColor Red
-    exit 1
+# --- Use Python from active virtual environment if available ---
+if ($env:VIRTUAL_ENV) {
+    $venvPython = Join-Path $env:VIRTUAL_ENV "Scripts\python.exe"
+    if (Test-Path $venvPython) {
+        $pythonExe = $venvPython
+        $scriptsPath = Join-Path $env:VIRTUAL_ENV "Scripts"
+    }
 }
 
-$latestPythonPath = Join-Path $pythonPackages[0].FullName "LocalCache\local-packages"
-$scriptsPath = Join-Path $latestPythonPath "Python313\Scripts"
-
-# Adjust if future Python version changes
-if (-not (Test-Path $scriptsPath)) {
-    $scriptsPath = Get-ChildItem -Path "$latestPythonPath" -Directory |
-        Where-Object { $_.Name -like "Python3*" } |
-        Sort-Object Name -Descending |
-        Select-Object -First 1 |
-        ForEach-Object { Join-Path $_.FullName "Scripts" }
+# --- Detect standard Python install path if not found from venv ---
+if (-not $pythonExe) {
+    $defaultPythonRoot = "$env:LOCALAPPDATA\Programs\Python"
+    if (Test-Path $defaultPythonRoot) {
+        $pyDirs = Get-ChildItem -Path $defaultPythonRoot -Directory | Where-Object { $_.Name -like "Python3*" }
+        foreach ($dir in $pyDirs) {
+            $possiblePython = Join-Path $dir.FullName "python.exe"
+            $possibleScripts = Join-Path $dir.FullName "Scripts"
+            if ((Test-Path $possiblePython) -and (Test-Path $possibleScripts)) {
+                $pythonExe = $possiblePython
+                $scriptsPath = $possibleScripts
+                break
+            }
+        }
+    }
 }
 
-if (-not (Test-Path $scriptsPath)) {
-    Write-Host "[X] Could not locate the Scripts folder for Microsoft Store Python." -ForegroundColor Red
+# --- Fallback: Microsoft Store Python detection ---
+if (-not $pythonExe) {
+    $packageRoot = "$env:LOCALAPPDATA\Packages"
+    $pythonPackages = Get-ChildItem -Path $packageRoot -Directory |
+        Where-Object { $_.Name -like "PythonSoftwareFoundation.Python.*" } |
+        Sort-Object Name -Descending
+
+    foreach ($pkg in $pythonPackages) {
+        $base = Join-Path $pkg.FullName "LocalCache\local-packages"
+        $pyDirs = Get-ChildItem -Path $base -Directory | Where-Object { $_.Name -like "Python3*" }
+        foreach ($dir in $pyDirs) {
+            $scripts = Join-Path $dir.FullName "Scripts"
+            $python = Join-Path $dir.FullName "python.exe"
+            if ((Test-Path $scripts) -and (Test-Path $python)) {
+                $scriptsPath = $scripts
+                $pythonExe = $python
+                break
+            }
+        }
+        if ($pythonExe) { break }
+    }
+}
+
+if (-not $pythonExe) {
+    Write-Host "[X] python.exe not found in expected paths." -ForegroundColor Red
     exit 1
 }
 
@@ -126,4 +152,4 @@ pyinstaller $specFile
 Copy-Item "$projectPath\config.ini" "$distDir" -Force
 
 # --- COMPLETION MESSAGE ---
-Write-Host "`n[OK] Build complete. You can find the output in: $distDir"
+Write-Host "n[OK] Build complete. You can find the output in: $distDir"

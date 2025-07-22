@@ -190,4 +190,4 @@ if __name__ == "__main__":
     while True:
         print(f"\n⏳ Scanning folder at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         process_folder(PDF_FOLDER)
-        time.sleep(300)  # Wait 5 minutes before next scan
+        time.sleep(30)  # Wait 30 seconds before next scan
